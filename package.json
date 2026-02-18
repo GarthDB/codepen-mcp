@@ -12,7 +12,7 @@
     "start": "node dist/index.js",
     "dev": "tsc && node dist/index.js",
     "prepare": "npm run build",
-    "test": "ava",
+    "test": "NODE_OPTIONS='--import=tsx/esm' ava",
     "changeset": "changeset",
     "version": "changeset version",
     "release": "npm run build && changeset publish"
@@ -40,9 +40,6 @@
     ],
     "extensions": [
       "ts"
-    ],
-    "nodeArguments": [
-      "--import=tsx/esm"
     ],
     "workerThreads": false
   }
