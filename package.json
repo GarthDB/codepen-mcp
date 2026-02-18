@@ -1,6 +1,6 @@
 {
   "name": "codepen-mcp",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "MCP server for ingesting and inspecting CodePen pens",
   "type": "module",
   "main": "dist/index.js",
@@ -12,8 +12,14 @@
     "start": "node dist/index.js",
     "dev": "tsc && node dist/index.js",
     "prepare": "npm run build",
-    "test": "ava"
+    "test": "ava",
+    "changeset": "changeset",
+    "version": "changeset version",
+    "release": "npm run build && changeset publish"
   },
+  "files": [
+    "dist"
+  ],
   "engines": {
     "node": ">=18"
   },
@@ -22,15 +28,22 @@
     "zod": "^3.23.0"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.29.8",
     "@types/node": "^20.0.0",
     "ava": "^6.0.0",
     "tsx": "^4.0.0",
     "typescript": "^5.0.0"
   },
   "ava": {
-    "files": ["test/**/*.test.ts"],
-    "extensions": ["ts"],
-    "nodeArguments": ["--import=tsx/esm"],
+    "files": [
+      "test/**/*.test.ts"
+    ],
+    "extensions": [
+      "ts"
+    ],
+    "nodeArguments": [
+      "--import=tsx/esm"
+    ],
     "workerThreads": false
   }
 }

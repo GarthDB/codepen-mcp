@@ -1,0 +1,45 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write       # to push version commits and tags
+      pull-requests: write  # to create and update the "Version Packages" PR
+      id-token: write       # to exchange OIDC token with npm (Trusted Publishers)
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          # No registry-url here — npm Trusted Publishers handles auth via OIDC
+          # without needing an NPM_TOKEN secret stored in GitHub
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Create Release PR or Publish to npm
+        uses: changesets/action@v1
+        with:
+          # When a "Version Packages" PR is merged, this command runs
+          publish: npm run release
+          title: "chore: version packages"
+          commit: "chore: version packages"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Adds provenance attestation to the published package (links it
+          # back to this workflow run via the OIDC token)
+          NPM_CONFIG_PROVENANCE: "true"
