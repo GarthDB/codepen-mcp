@@ -19,37 +19,22 @@ CodePen has **no public REST/GraphQL API** for reading pen data. This server use
 
 ## Setup
 
-### Install and build
-
-```bash
-npm install
-npm run build
-```
-
-### Run the server (stdio)
-
-The server uses stdio transport so Cursor can spawn it as a subprocess:
-
-```bash
-node dist/index.js
-```
-
 ### Configure Cursor
 
-Add the CodePen MCP server in Cursor (e.g. **Settings → MCP** or your MCP config file). Example:
+Add the following to your Cursor MCP config (e.g. **Settings → MCP** or `~/.cursor/mcp.json`):
 
 ```json
 {
   "mcpServers": {
     "codepen": {
-      "command": "node",
-      "args": ["/absolute/path/to/codepen-mcp/dist/index.js"]
+      "command": "npx",
+      "args": ["-y", "codepen-mcp"]
     }
   }
 }
 ```
 
-Use the path to your cloned repo (e.g. `/Users/you/Projects/codepen-mcp/dist/index.js`).
+That's it — `npx` will download and run the latest version automatically. No cloning or building required.
 
 ## Optional: Agent Skill
 
