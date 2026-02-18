@@ -12,7 +12,7 @@
     "start": "node dist/index.js",
     "dev": "tsc && node dist/index.js",
     "prepare": "npm run build",
-    "test": "NODE_OPTIONS='--import=tsx/esm' ava",
+    "test": "tsc -p tsconfig.test.json && ava",
     "changeset": "changeset",
     "version": "changeset version",
     "release": "npm run build && changeset publish"
@@ -36,11 +36,7 @@
   },
   "ava": {
     "files": [
-      "test/**/*.test.ts"
-    ],
-    "extensions": [
-      "ts"
-    ],
-    "workerThreads": false
+      ".dist-test/test/**/*.test.js"
+    ]
   }
 }

@@ -3,6 +3,11 @@ import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import { createServer } from "../src/server.js";
 
+type TextContent = { type: "text"; text: string };
+function textContent(result: unknown): TextContent[] {
+  return (result as { content: TextContent[] }).content;
+}
+
 // ---------------------------------------------------------------------------
 // Fixtures and mock helpers
 // ---------------------------------------------------------------------------
@@ -110,10 +115,10 @@ test.serial("get_pen_metadata: returns title and author from oEmbed", async (t) 
   });
 
   t.falsy(result.isError);
-  t.is(result.content.length, 1);
-  const content = result.content[0];
-  t.is(content.type, "text");
-  const parsed = JSON.parse((content as { type: "text"; text: string }).text);
+  const content = textContent(result);
+  t.is(content.length, 1);
+  t.is(content[0].type, "text");
+  const parsed = JSON.parse(content[0].text);
   t.is(parsed.title, "Responsive Sidenotes V2");
   t.is(parsed.author_name, "John D. Jameson");
   t.truthy(parsed.embed_html);
@@ -126,7 +131,7 @@ test.serial("get_pen_metadata: accepts slug format", async (t) => {
     arguments: { pen_url: "johndjameson/pen/DwxMqa" },
   });
   t.falsy(result.isError);
-  const parsed = JSON.parse((result.content[0] as { type: "text"; text: string }).text);
+  const parsed = JSON.parse(textContent(result)[0].text);
   t.is(parsed.pen_url, "https://codepen.io/johndjameson/pen/DwxMqa");
 });
 
@@ -137,7 +142,7 @@ test.serial("get_pen_metadata: invalid URL returns isError", async (t) => {
     arguments: { pen_url: "not-a-valid-url" },
   });
   t.true(result.isError);
-  const text = (result.content[0] as { type: "text"; text: string }).text;
+  const text = textContent(result)[0].text;
   t.true(text.startsWith("Error:"));
 });
 
@@ -153,7 +158,7 @@ test.serial("get_pen: returns full pen source", async (t) => {
   });
 
   t.falsy(result.isError);
-  const parsed = JSON.parse((result.content[0] as { type: "text"; text: string }).text);
+  const parsed = JSON.parse(textContent(result)[0].text);
   t.is(parsed.title, "Responsive Sidenotes V2");
   t.is(parsed.css_pre_processor, "scss");
   t.deepEqual(parsed.tags, ["layout", "text", "responsive", "rwd", "simple"]);
@@ -171,7 +176,7 @@ test.serial("get_pen: includes author information", async (t) => {
   });
 
   t.falsy(result.isError);
-  const parsed = JSON.parse((result.content[0] as { type: "text"; text: string }).text);
+  const parsed = JSON.parse(textContent(result)[0].text);
   t.is(parsed.author.username, "johndjameson");
   t.is(parsed.author.name, "John D. Jameson");
 });
@@ -191,7 +196,7 @@ test.serial("get_pen: fetch error returns isError", async (t) => {
     arguments: { pen_url: "https://codepen.io/johndjameson/pen/DwxMqa" },
   });
   t.true(result.isError);
-  const text = (result.content[0] as { type: "text"; text: string }).text;
+  const text = textContent(result)[0].text;
   t.true(text.includes("404"));
 });
 
@@ -207,7 +212,7 @@ test.serial("get_pen_embed_html: returns embed iframe HTML", async (t) => {
   });
 
   t.falsy(result.isError);
-  const parsed = JSON.parse((result.content[0] as { type: "text"; text: string }).text);
+  const parsed = JSON.parse(textContent(result)[0].text);
   t.is(parsed.title, "Responsive Sidenotes V2");
   t.truthy(parsed.embed_html);
   t.true(parsed.embed_html.includes("<iframe"));
