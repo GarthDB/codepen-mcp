@@ -12,7 +12,7 @@
     "start": "node dist/index.js",
     "dev": "tsc && node dist/index.js",
     "prepare": "npm run build",
-    "test": "ava",
+    "test": "tsc -p tsconfig.test.json && ava",
     "changeset": "changeset",
     "version": "changeset version",
     "release": "npm run build && changeset publish"
@@ -28,22 +28,22 @@
     "zod": "^3.23.0"
   },
   "devDependencies": {
+    "@ava/typescript": "^6.0.0",
     "@changesets/cli": "^2.29.8",
     "@types/node": "^20.0.0",
     "ava": "^6.0.0",
-    "tsx": "^4.0.0",
     "typescript": "^5.0.0"
   },
   "ava": {
     "files": [
       "test/**/*.test.ts"
     ],
-    "extensions": [
-      "ts"
-    ],
-    "nodeArguments": [
-      "--import=tsx/esm"
-    ],
-    "workerThreads": false
+    "typescript": {
+      "rewritePaths": {
+        "src/": ".dist-test/src/",
+        "test/": ".dist-test/test/"
+      },
+      "compile": false
+    }
   }
 }
